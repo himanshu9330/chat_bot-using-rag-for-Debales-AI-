@@ -1,5 +1,5 @@
 # Debales AI Assistant
-
+video link:  (https://drive.google.com/drive/folders/1zuQBiFk5_Q78_LQbkpJ81jRkX9dodVh1)
 ## 1. Project Title & Description
 
 **Debales AI Assistant** is an intelligent context-aware logistics chatbot designed to handle both internal company knowledge and external world data seamlessly. 
@@ -24,6 +24,27 @@ The system is highly modular, consisting of several core components working in u
 
 The application follows a strictly defined LangGraph state workflow:
 
+```mermaid
+flowchart TD
+    A[User Input] --> B{LangGraph Router}
+    
+    B -- "Debales Keywords" --> C[RAG Node]
+    B -- "General Queries" --> D[SERP Node]
+    B -- "Comparison / Mixed" --> E[BOTH Node]
+    
+    C --> F[(Pinecone Vector DB)]
+    D --> G[(Google Search)]
+    
+    E -->|Parallel Exec| F
+    E -->|Parallel Exec| G
+    
+    F --> H[Combine Context]
+    G --> H
+    
+    H --> I[Groq LLM]
+    I --> J[Final Answer]
+```
+
 1. **User Query Input:** The user submits a question via the Streamlit interface.
 2. **Router Evaluation:** 
    - Uses hardcoded keyword detection (comparison terms, external tools, internal product terms) to make an instant routing decision.
@@ -38,6 +59,36 @@ The application follows a strictly defined LangGraph state workflow:
 ---
 
 ## 4. Data Flow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant S as System
+    participant R as Pinecone (RAG)
+    participant W as SerpAPI (Web)
+    participant L as Groq (LLM)
+
+    U->>S: Submits Query
+    S->>S: Extract keywords & Decide Route
+    
+    alt is_debales = True
+        S->>R: Embed query & Search vectors
+        R-->>S: Return top matches
+        S->>S: Apply Progressive Filtering
+    else is_general = True
+        S->>W: Fetch live results
+        W-->>S: Return web snippets
+    else is_comparison = True
+        par Parallel Execution
+            S->>R: Fetch Internal Data
+            S->>W: Fetch External Data
+        end
+    end
+
+    S->>L: Inject context into strict prompt
+    L-->>S: Generate grounded answer
+    S-->>U: Display response
+```
 
 1. **Query Embedding & Retrieval:** When routed to RAG, the query is converted into a 384-dimensional vector using Sentence Transformers. The vector queries the `debales-ai` Pinecone index. `top_k` results are progressively filtered (score > 0.4, no noise keywords, business relevant).
 2. **Web Snippet Extraction:** When routed to SERP, the query is passed to SerpApi. The JSON response extracts the top 5 `organic_results` and combines their `title` and `snippet`.
@@ -89,7 +140,8 @@ debales-chatbot/
 3. **Add API Keys:**
    Create a `.env` file in the root directory and add:
    ```env
-   PINECONE_API_KEY=your_pinecone_key_here
+   PINECONE_API_KEY=your_pinecone_key_here(pcsk_2yXJZN_9gkMEtw4D5mqCUEtehyWxeLJvx4ArMC5GgAgdFeqFAdm4Cqsx3CrQYwM6xTDmL3) 
+  ** **i provide you the pinecone api key so that you can access my cloude database we i stored the vector embaddings ****
    GROQ_API_KEY=your_groq_key_here
    SERPAPI_API_KEY=your_serpapi_key_here
    ```
