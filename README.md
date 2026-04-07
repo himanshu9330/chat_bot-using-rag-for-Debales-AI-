@@ -141,7 +141,7 @@ debales-chatbot/
    Create a `.env` file in the root directory and add:
    ```env
    PINECONE_API_KEY=your_pinecone_key_here(pcsk_2yXJZN_9gkMEtw4D5mqCUEtehyWxeLJvx4ArMC5GgAgdFeqFAdm4Cqsx3CrQYwM6xTDmL3) 
-  ** **i provide you the pinecone api key so that you can access my cloude database we i stored the vector embaddings ****
+  ** **i provide you the pinecone api key so that you can access my cloude database where i stored the vector embaddings of debales documents(by webscrabing)****
    GROQ_API_KEY=your_groq_key_here
    SERPAPI_API_KEY=your_serpapi_key_here
    ```
