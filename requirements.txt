@@ -1,0 +1,19 @@
+# Core
+streamlit
+python-dotenv
+
+# LangGraph Workflow
+langgraph
+langchain
+langchain-core
+
+# Vector Database
+pinecone
+sentence-transformers
+
+# LLM
+groq
+
+# Search
+requests
+google-search-results
